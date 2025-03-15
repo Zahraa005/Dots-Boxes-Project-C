@@ -122,11 +122,7 @@ void botMove(int *r1, int *c1, int *r2, int *c2, int difficulty) {
         }
     }
 }
-
-
-        
-
-int main() {
+void twoPlayers(){
     initializeBoard();
     char currentPlayer = 'A';
     
@@ -165,6 +161,35 @@ int main() {
     printf("Final Score :\nPlayer A: %d \nPlayer B: %d\n", scoreA, scoreB);
     printf("Winner: %s\n", (scoreA > scoreB) ? "Player A" : (scoreB > scoreA) ? "Player B" : "Draw!");
     printf("***********************\n");
+
+    
+}
+
+int main() {
+   int choice;
+    
+    printf("Hello!! Choose your game mode:\n");
+    printf("1. Multiplayer\n");
+    printf("2. Play against Bot\n");
+    printf("Enter your choice (1 or 2): ");
+    scanf("%d", &choice);
+
+    if (choice == 1) {
+        twoPlayers();
+    } else if (choice == 2) {
+        printf("Choose bot difficulty:\n");
+        printf("1. Easy\n");
+        printf("2. Medium\n");
+        printf("3. Hard\n");
+        printf("Enter difficulty level (1-3): ");
+        scanf("%d", &botDifficulty);
+
+        vsBot = true;
+        playWithBot();
+        
+    } else {
+        printf("Invalid choice! Exiting program.\n");
+    }
 
     return 0;
 }
