@@ -1,13 +1,16 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <time.h>
 
 #define ROWS 5
 #define COLS 6
 
 
 char board[ROWS * 2 - 1][COLS * 2 - 1];  
-int scoreA = 0, scoreB = 0;              
+int scoreA = 0, scoreB = 0;  
+bool vsBot = false; //for the bot
+int botDifficulty = 1;   
 
 void initializeBoard() {
     for (int i = 0; i < ROWS * 2 - 1; i++) {
@@ -100,6 +103,28 @@ bool isGameOver() {
     return (scoreA + scoreB == (ROWS - 1) * (COLS - 1));
 }
 
+        //BOTMOVE
+void botMove(int *r1, int *c1, int *r2, int *c2, int difficulty) {
+    if (difficulty == 1) {  
+        // Easy bot: Makes random moves
+        int valid = 0;
+        while (!valid) {
+            *r1 = rand() % ROWS;
+            *c1 = rand() % COLS;
+            if (rand() % 2) {  
+                *r2 = *r1;
+                *c2 = (*c1 == COLS - 1) ? *c1 - 1 : *c1 + 1;
+            } else {  
+                *c2 = *c1;
+                *r2 = (*r1 == ROWS - 1) ? *r1 - 1 : *r1 + 1;
+            }
+            valid = isValidMove(*r1, *c1, *r2, *c2);
+        }
+    }
+}
+
+
+        
 
 int main() {
     initializeBoard();
