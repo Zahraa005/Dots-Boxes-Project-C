@@ -165,6 +165,56 @@ void twoPlayers(){
     
 }
 
+void playWithBot() {
+    initializeBoard();
+    char currentPlayer = 'A';  // Player A is the user, substituted player B with the BOT 'B'
+
+    while (!isGameOver()) {
+        displayBoard();
+
+        int r1, c1, r2, c2;
+        bool extraTurn = false;
+        bool validMove = false;
+
+        if (currentPlayer == 'A') {  
+            
+            do {
+                printf("Player A's turn. Enter row & column of first dot (e.g., A0-> 0 0, and then second dot): ");
+                scanf("%d %d %d %d", &r1, &c1, &r2, &c2);
+
+                if (!isValidMove(r1, c1, r2, c2)) {
+                    printf("Invalid move! Try again.\n");
+                } else {
+                    validMove = true;
+                    placeMove(r1, c1, r2, c2);
+                    extraTurn = checkForBoxes('A');
+                }
+
+            } while (!validMove);
+        } else {  
+            
+            printf("Bot is making a move...\n");
+            botMove(&r1, &c1, &r2, &c2, botDifficulty);
+            placeMove(r1, c1, r2, c2);
+            extraTurn = checkForBoxes('B');
+        }
+
+        printf("***********************\n");
+        printf("Player A scores: %d \nBot scores: %d\n", scoreA, scoreB);
+        printf("***********************\n");
+
+        if (!extraTurn) {
+            currentPlayer = (currentPlayer == 'A') ? 'B' : 'A';
+        }
+    }
+
+    displayBoard();
+    printf("***********************\n");
+    printf("Final Score:\nPlayer A: %d \nBot: %d\n", scoreA, scoreB);
+    printf("Winner: %s\n", (scoreA > scoreB) ? "Player A" : (scoreB > scoreA) ? "Bot" : "Draw!");
+    printf("***********************\n");
+}
+
 int main() {
    int choice;
     
