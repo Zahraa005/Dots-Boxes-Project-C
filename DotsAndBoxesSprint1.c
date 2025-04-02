@@ -121,6 +121,37 @@ void botMove(int *r1, int *c1, int *r2, int *c2, int difficulty) {
             valid = isValidMove(*r1, *c1, *r2, *c2);
         }
     }
+     else if (difficulty == 2) {
+        for (int i = 1; i < ROWS * 2 - 1; i += 2) {
+            for (int j = 1; j < COLS * 2 - 1; j += 2) {
+                if (board[i][j] == ' ') {
+                    int count = 0;
+                    int missingR = -1, missingC = -1;
+
+                    if (board[i - 1][j] != '-') { count++; missingR = i - 1; missingC = j; }
+                    if (board[i + 1][j] != '-') { count++; missingR = i + 1; missingC = j; }
+                    if (board[i][j - 1] != '|') { count++; missingR = i; missingC = j - 1; }
+                    if (board[i][j + 1] != '|') { count++; missingR = i; missingC = j + 1; }
+
+                    if (count == 1) {
+                        if (missingR % 2 == 0) {
+                            *r1 = missingR / 2;
+                            *r2 = *r1;
+                            *c1 = (missingC - 1) / 2;
+                            *c2 = *c1 + 1;
+                        } else {
+                            *c1 = missingC / 2;
+                            *c2 = *c1;
+                            *r1 = (missingR - 1) / 2;
+                            *r2 = *r1 + 1;
+                        }
+
+                        if (isValidMove(*r1, *c1, *r2, *c2)) return;
+                    }
+                }
+            }
+        }
+     }
 }
 void twoPlayers(){
     initializeBoard();
