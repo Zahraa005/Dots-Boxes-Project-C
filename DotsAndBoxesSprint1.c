@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
 
 #define ROWS 5
 #define COLS 6
@@ -10,7 +11,12 @@
 char board[ROWS * 2 - 1][COLS * 2 - 1];  
 int scoreA = 0, scoreB = 0;  
 bool vsBot = false; //for the bot
-int botDifficulty = 1;   
+int botDifficulty = 1; 
+
+typedef struct {
+    int r1, c1, r2, c2;
+    int score;
+} Move;
 
 void initializeBoard() {
     for (int i = 0; i < ROWS * 2 - 1; i++) {
@@ -102,6 +108,28 @@ bool checkForBoxes(char player) {
 bool isGameOver() {
     return (scoreA + scoreB == (ROWS - 1) * (COLS - 1));
 }
+int evaluateBoard() {
+    return scoreB - scoreA;
+}
+
+int generateMoves(Move moves[]) {
+    int count = 0;
+    for (int r = 0; r < ROWS; ++r) {
+        for (int c = 0; c < COLS; ++c) {
+            int dr[] = {0, 1};
+            int dc[] = {1, 0};
+            for (int d = 0; d < 2; ++d) {
+                int nr = r + dr[d];
+                int nc = c + dc[d];
+                if (nr < ROWS && nc < COLS && isValidMove(r, c, nr, nc)) {
+                    moves[count++] = (Move){r, c, nr, nc, 0};
+                }
+            }
+        }
+    }
+    return count;
+}
+
 
         //BOTMOVE
 void botMove(int *r1, int *c1, int *r2, int *c2, int difficulty) {
