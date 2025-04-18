@@ -322,6 +322,7 @@ void playWithBot() {
             
             printf("Bot is making a move...\n");
             botMove(&r1, &c1, &r2, &c2, botDifficulty);
+            printf("Bot played: (%d,%d), (%d,%d)\n", r1, c1, r2, c2);
             placeMove(r1, c1, r2, c2);
             extraTurn = checkForBoxes('B');
         }
