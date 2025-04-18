@@ -130,6 +130,53 @@ int generateMoves(Move moves[]) {
     return count;
 }
 
+int alphaBeta(int depth, int alpha, int beta, bool maximizingPlayer) {
+    if (depth == 0 || isGameOver()) return evaluateBoard();
+
+    Move moves[ROWS * COLS * 2];
+    int moveCount = generateMoves(moves);
+
+    if (maximizingPlayer) {
+        int maxEval = -10000;
+        for (int i = 0; i < moveCount; i++) {
+            char backup[ROWS * 2 - 1][COLS * 2 - 1];
+            memcpy(backup, board, sizeof(board));
+            int tempScoreB = scoreB;
+
+            placeMove(moves[i].r1, moves[i].c1, moves[i].r2, moves[i].c2);
+            bool extra = checkForBoxes('B');
+            int eval = alphaBeta(depth - 1, alpha, beta, extra);
+
+            memcpy(board, backup, sizeof(board));
+            scoreB = tempScoreB;
+
+            if (eval > maxEval) maxEval = eval;
+            if (eval > alpha) alpha = eval;
+            if (beta <= alpha) break;
+        }
+        return maxEval;
+    } else {
+        int minEval = 10000;
+        for (int i = 0; i < moveCount; i++) {
+            char backup[ROWS * 2 - 1][COLS * 2 - 1];
+            memcpy(backup, board, sizeof(board));
+            int tempScoreA = scoreA;
+
+            placeMove(moves[i].r1, moves[i].c1, moves[i].r2, moves[i].c2);
+            bool extra = checkForBoxes('A');
+            int eval = alphaBeta(depth - 1, alpha, beta, !extra);
+
+            memcpy(board, backup, sizeof(board));
+            scoreA = tempScoreA;
+
+            if (eval < minEval) minEval = eval;
+            if (eval < beta) beta = eval;
+            if (beta <= alpha) break;
+        }
+        return minEval;
+    }
+}
+
 
         //BOTMOVE
 void botMove(int *r1, int *c1, int *r2, int *c2, int difficulty) {
@@ -179,7 +226,28 @@ void botMove(int *r1, int *c1, int *r2, int *c2, int difficulty) {
                 }
             }
         }
-     }
+     } else if (difficulty == 3) {
+        Move moves[ROWS * COLS * 2];
+        int moveCount = generateMoves(moves);
+        int bestScore = -10000;
+        Move bestMove = moves[0];
+        for (int i = 0; i < moveCount; i++) {
+            char backup[ROWS * 2 - 1][COLS * 2 - 1];
+            memcpy(backup, board, sizeof(board));
+            int tempScoreB = scoreB;
+            placeMove(moves[i].r1, moves[i].c1, moves[i].r2, moves[i].c2);
+            bool extra = checkForBoxes('B');
+            int score = alphaBeta(4, -10000, 10000, extra);
+            if (score > bestScore) {
+                bestScore = score;
+                bestMove = moves[i];
+            }
+            memcpy(board, backup, sizeof(board));
+            scoreB = tempScoreB;
+        }
+        *r1 = bestMove.r1; *c1 = bestMove.c1;
+        *r2 = bestMove.r2; *c2 = bestMove.c2;
+    }
 }
 void twoPlayers(){
     initializeBoard();
