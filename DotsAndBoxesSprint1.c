@@ -261,7 +261,7 @@ void playGame(bool vsBot, int difficulty) {
 
         do {
             if (currentPlayer == 'A' || !vsBot) {
-                printf("Player %c's turn. Enter row & column of first dot(e.g., A0-> 0 0, and then second dot: ", currentPlayer);
+                printf("Player %c's turn. Enter row & column of first dot(e.g., A0-> 0 0, and then second dot) : ", currentPlayer);
                 scanf("%d %d %d %d", &r1, &c1, &r2, &c2);
                 if (!isValidMove(r1, c1, r2, c2)) {
                     printf("Invalid move! Try again.\n");
