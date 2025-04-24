@@ -197,17 +197,19 @@ void botMove(int *r1, int *c1, int *r2, int *c2, int difficulty) {
         }
     }
      else if (difficulty == 2) {
-        for (int i = 1; i < ROWS * 2 - 1; i += 2) {
-            for (int j = 1; j < COLS * 2 - 1; j += 2) {
+        bool foundMove = false;
+    
+        for (int i = 1; i < ROWS * 2 - 1 && !foundMove; i += 2) {
+            for (int j = 1; j < COLS * 2 - 1 && !foundMove; j += 2) {
                 if (board[i][j] == ' ') {
                     int count = 0;
                     int missingR = -1, missingC = -1;
-
+    
                     if (board[i - 1][j] != '-') { count++; missingR = i - 1; missingC = j; }
                     if (board[i + 1][j] != '-') { count++; missingR = i + 1; missingC = j; }
                     if (board[i][j - 1] != '|') { count++; missingR = i; missingC = j - 1; }
                     if (board[i][j + 1] != '|') { count++; missingR = i; missingC = j + 1; }
-
+    
                     if (count == 1) {
                         if (missingR % 2 == 0) {
                             *r1 = missingR / 2;
@@ -220,13 +222,39 @@ void botMove(int *r1, int *c1, int *r2, int *c2, int difficulty) {
                             *r1 = (missingR - 1) / 2;
                             *r2 = *r1 + 1;
                         }
-
-                        if (isValidMove(*r1, *c1, *r2, *c2)) return;
+    
+                        if (isValidMove(*r1, *c1, *r2, *c2)) {
+                            foundMove = true;
+                            return;
+                        }
                     }
                 }
             }
         }
-     } else if (difficulty == 3) {
+    
+        // random move if no box is found
+        if (!foundMove) {
+            while (1) {
+                *r1 = rand() % ROWS;
+                *c1 = rand() % COLS;
+    
+                if (rand() % 2 == 0) { 
+                    if (*c1 + 1 < COLS) {
+                        *r2 = *r1;
+                        *c2 = *c1 + 1;
+                    } else continue;
+                } else { 
+                    if (*r1 + 1 < ROWS) {
+                        *r2 = *r1 + 1;
+                        *c2 = *c1;
+                    } else continue;
+                }
+    
+                if (isValidMove(*r1, *c1, *r2, *c2)) return;
+            }
+        }
+    }
+      else if (difficulty == 3) {
         Move moves[ROWS * COLS * 2];
         int moveCount = generateMoves(moves);
         int bestScore = -10000;
